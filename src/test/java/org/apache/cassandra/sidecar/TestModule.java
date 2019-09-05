@@ -105,4 +105,10 @@ public class TestModule extends AbstractModule
                            .setSslEnabled(false)
                            .build();
     }
+
+    @Override
+    protected void configure()
+    {
+
+    }
 }

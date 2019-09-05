@@ -48,6 +48,12 @@ public class MainModule extends AbstractModule
 {
     private static final Logger logger = LoggerFactory.getLogger(MainModule.class);
 
+    @Override
+    protected void  configure()
+    {
+
+    }
+
     @Provides
     @Singleton
     public Vertx getVertx()
@@ -108,7 +114,7 @@ public class MainModule extends AbstractModule
     @Singleton
     public Configuration configuration() throws ConfigurationException
     {
-        final String confPath = System.getProperty("sidecar.config", "file://./conf/config.yaml");
+        final String confPath = System.getProperty("sidecar.config", "file:///Users/spasupuleti/Projects/hack/cassandra-sidecar/src/main/dist/conf/sidecar.yaml");
         logger.info("Reading configuration from {}", confPath);
         try
         {

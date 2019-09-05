@@ -3,7 +3,7 @@
 #
 
 cassandra:
-  - host: localhost
+  - host: 127.0.0.1
   - port: 9042
 
 sidecar:
@@ -26,9 +26,9 @@ healthcheck:
   - poll_freq_millis: 30000
 
 cdc:
-  - configPath: file:///Users/tgamaethige/Dev/nfcassandra/conf/cassandra.yaml
-  - keySpace: testspace
-  - columnFamily: movies
-  - kafkaServer: kvmkafka_default-deltadev-zone1.cluster.us-east-1.test.cloud.netflix.net:7101
-  - kafkaTopic: deltaconnector_cassandra_dev_in
-  - outputType: kafka
+  - configPath: file:///Users/spasupuleti/Projects/github/cassandra/conf/cassandra.yaml
+  - keySpace: cql_keyspace
+  - columnFamily: cdctest1
+  - kafkaServer: share.kafka.us-east-1.dyntest.netflix.net:7101
+  - kafkaTopic: cass_cdc_poc
+  - outputType: "null"

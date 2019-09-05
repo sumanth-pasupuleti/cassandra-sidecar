@@ -47,16 +47,15 @@ public class KafkaOutput implements Output
     public void emitPartition(PartitionUpdate partition) throws Exception
     {
         //if (producer == null || partition == null || partition.metadata().cfName.equals(config.getColumnFamily())){
-        if (producer == null || partition == null || !partition.metadata().name.equals(conf.getColumnFamily()))
+        if (producer == null || partition == null || !partition.metadata().cfName.equals(conf.getColumnFamily()))
         {
             throw new Exception("Kafka output is not properly configured");
         }
-        logger.debug("Started handling a partition with the column family : {}", partition.metadata().name);
+        logger.debug("Started handling a partition with the column family : {}", partition.metadata().cfName);
         try
         {
             //String partitionKey = partition.metadata().getKeyValidator().getString(partition.partitionKey().getKey());
-            String partitionKey = partition.metadata().partitionKeyType.getSerializer()
-                    .toCQLLiteral(partition.partitionKey().getKey());
+            String partitionKey = partition.metadata().getKeyValidator().getString(partition.partitionKey().getKey());
             logger.debug("Producing a partition update with the key : {}",  partitionKey);
             ProducerRecord<String, ByteBuffer> record = new ProducerRecord<>(conf.getKafkaTopic(), partitionKey,
                     PartitionUpdate.toBytes(partition, 1));

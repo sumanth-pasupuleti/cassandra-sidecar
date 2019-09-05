@@ -15,8 +15,8 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 
 import org.apache.cassandra.config.DatabaseDescriptor;
+import org.apache.cassandra.config.Schema;
 import org.apache.cassandra.schema.KeyspaceMetadata;
-import org.apache.cassandra.schema.Schema;
 import org.apache.cassandra.sidecar.CQLSession;
 import org.apache.cassandra.sidecar.Configuration;
 
@@ -53,10 +53,10 @@ public class CDCReaderService implements Host.StateListener
                 throw new ConfigurationException("Configuration is not set for the CDC reader");
             }
 
-            if (!DatabaseDescriptor.isToolInitialized())
+            System.setProperty("cassandra.config", conf.getCassandraConfigPath());
+            if (!DatabaseDescriptor.isDaemonInitialized())
             {
-                System.setProperty("cassandra.config", conf.getCassandraConfigPath());
-                DatabaseDescriptor.toolInitialization();
+                DatabaseDescriptor.forceStaticInitialization();
                 Schema.instance.loadFromDisk(false);
             }
 
@@ -66,7 +66,7 @@ public class CDCReaderService implements Host.StateListener
                 return;
             }
 
-            KeyspaceMetadata keyspaceMetadata = Schema.instance.getKeyspaceMetadata(conf.getKeySpace());
+            KeyspaceMetadata keyspaceMetadata = Schema.instance.getKSMetaData(conf.getKeySpace());
             if (keyspaceMetadata == null)
             {
                 logger.error("Keyspace {} is not found", conf.getKeySpace());
@@ -80,7 +80,6 @@ public class CDCReaderService implements Host.StateListener
                 return;
             }
 
-            Schema.instance.load(keyspaceMetadata);
             this.cdcIndexWatcher = new CDCIndexWatcher(this.conf, DatabaseDescriptor.getCDCLogLocation());
             this.ssTableDumper = new SSTableDumper(this.conf);
             cdcWatcher = Executors.newSingleThreadExecutor();

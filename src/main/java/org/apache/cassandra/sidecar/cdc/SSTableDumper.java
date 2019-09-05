@@ -6,16 +6,15 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.apache.cassandra.config.Schema;
 import org.apache.cassandra.db.ColumnFamilyStore;
 import org.apache.cassandra.db.Directories;
 import org.apache.cassandra.db.Keyspace;
-import org.apache.cassandra.db.filter.ColumnFilter;
 import org.apache.cassandra.db.partitions.PartitionUpdate;
 import org.apache.cassandra.db.partitions.UnfilteredPartitionIterator;
 import org.apache.cassandra.io.sstable.Component;
 import org.apache.cassandra.io.sstable.Descriptor;
 import org.apache.cassandra.io.sstable.format.SSTableReader;
-import org.apache.cassandra.schema.Schema;
 import org.apache.cassandra.sidecar.Configuration;
 import org.apache.cassandra.sidecar.cdc.output.Output;
 import org.apache.cassandra.sidecar.cdc.output.OutputFactory;
@@ -51,7 +50,7 @@ public class SSTableDumper
             logger.error("Output producer is not properly initiated");
             return;
         }
-        if (Schema.instance.getTableMetadata(keySpace, columnFamily) == null)
+        if (Schema.instance.getCFMetaData(keySpace, columnFamily) == null)
         {
             logger.error("Unknown keySpace/columnFamily {}.{}. No data to dump", keySpace, columnFamily);
             return;
@@ -76,8 +75,7 @@ public class SSTableDumper
                         UnfilteredPartitionIterator ufp = reader.getScanner();
                         while (ufp.hasNext())
                         {
-                            PartitionUpdate partition = PartitionUpdate.fromIterator(ufp.next(),
-                                    ColumnFilter.all(ufp.metadata()));
+                            PartitionUpdate partition = PartitionUpdate.fromIterator(ufp.next());
                             producer.emitPartition(partition);
                         }
                         ufp.close();
