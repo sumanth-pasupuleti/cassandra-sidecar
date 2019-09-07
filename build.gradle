@@ -80,7 +80,7 @@ dependencies {
     compile group: 'org.apache.commons', name: 'commons-configuration2', version: '2.4'
 
     // https://mvnrepository.com/artifact/org.apache.cassandra/cassandra-all
-    compile group: 'org.apache.cassandra', name: 'cassandra-all', version: '3.0.19-SNAPSHOT'
+    compile group: 'org.apache.cassandra', name: 'cdc-cassandra-all', version: '3.0.19-SNAPSHOT'
     
     // start CDC reader dependencies
     compile group: 'io.netty', name: 'netty-all', version: '4.1.28.Final'
